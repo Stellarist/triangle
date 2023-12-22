@@ -1,0 +1,8 @@
+assets/
+build/
+bin/
+dependencies/
+lib/
+.cache/
+.vscode/
+.idea/
