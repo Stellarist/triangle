@@ -6,8 +6,6 @@
 #include <glm/glm.hpp>
 
 #include "Shader.hpp"
-#include "VertexBuffer.hpp"
-#include "VertexBufferLayout.hpp"
 
 const int MAX_BONES_INFLUENCE = 4;
 

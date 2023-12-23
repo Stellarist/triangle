@@ -8,9 +8,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
-#include "../Camera.hpp"
-#include "../Shader.hpp"
-#include "../VertexBuffer.hpp"
+#include "Camera.hpp"
+#include "Shader.hpp"
+#include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
+#include "VertexLayout.hpp"
 
 int SCR_WIDTH=1920;
 int SCR_HEIGHT=1080;
@@ -33,9 +35,6 @@ int main(int argc, char const* argv[])
 {
     if (!glfwInit())
         return -1;
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow *window =
         glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
@@ -126,25 +125,21 @@ int main(int argc, char const* argv[])
         glm::vec3( 0.0f,  0.0f, -3.0f)
     };
 
-    unsigned int box_vao;
-    glGenVertexArrays(1, &box_vao);
-    glBindVertexArray(box_vao);
+    VertexArray box_vao;
+    VertexBuffer box_vbo(vertices, sizeof(vertices));
+    VertexLayout box_layout;
+    box_layout.push<float>(3);
+    box_layout.push<float>(3);
+    box_layout.push<float>(2);
+    box_vao.addBuffer(box_vbo, box_layout);
 
-    VertexBuffer vbo(vertices, sizeof(vertices));
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)(6*sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    unsigned int light_vao;
-    glGenVertexArrays(1, &light_vao);
-    glBindVertexArray(light_vao);
-
-    vbo.bind();
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    VertexArray light_vao;
+    VertexBuffer light_vbo(vertices, sizeof(vertices));
+    VertexLayout light_layout;
+    light_layout.push<float>(3);
+    light_layout.push<float>(3);
+    light_layout.push<float>(2);
+    light_vao.addBuffer(light_vbo, light_layout);
 
     unsigned int diffuse_map=loadTexture(PROJECT_PATH"/assets/textures/container2.png");
     unsigned int specular_map=loadTexture(PROJECT_PATH"/assets/textures/container2_specular.png");
@@ -233,7 +228,7 @@ int main(int argc, char const* argv[])
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, specular_map);
 
-        glBindVertexArray(box_vao);
+        box_vao.bind();
         for(size_t i=0; i<10; i++){
             glm::mat4 mode=glm::mat4(1.0f);
             model=glm::translate(mode, cube_positions[i]);
@@ -247,7 +242,7 @@ int main(int argc, char const* argv[])
         light_shader.setMat4("projection", projection);
         light_shader.setMat4("view", view);
     
-        glBindVertexArray(light_vao);
+        light_vao.bind();
         for (unsigned int i = 0; i < 4; i++)
         {
             model = glm::mat4(1.0f);
@@ -261,8 +256,6 @@ int main(int argc, char const* argv[])
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &box_vao);
-    glDeleteVertexArrays(1, &light_vao);
 
     glfwTerminate();
     return 0;

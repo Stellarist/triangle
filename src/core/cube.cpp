@@ -8,9 +8,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
-#include "../Camera.hpp"
-#include "../Shader.hpp"
-#include "../VertexBuffer.hpp"
+#include "Camera.hpp"
+#include "Shader.hpp"
+#include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
+#include "VertexLayout.hpp"
 
 int SCR_WIDTH=1920;
 int SCR_HEIGHT=1080;
@@ -121,17 +123,12 @@ int main(int argc, char const* argv[])
     };
 
     // create and bind buffers
-    unsigned int vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
+    VertexArray vao;
     VertexBuffer vbo(vertices, 5*6*6*sizeof(float));
-
-    // link vertex attributes
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
-    glEnableVertexAttribArray(1);
+    VertexLayout vlo;
+    vlo.push<float>(3);
+    vlo.push<float>(2);
+    vao.addBuffer(vbo, vlo);
 
     // creating textures
     unsigned int texture1;
@@ -201,7 +198,7 @@ int main(int argc, char const* argv[])
         glm::mat4 projection=camera.getProjection();
         our_shader.setMat4("projection", projection);
 
-        glBindVertexArray(vao);
+        vao.bind();
         for(unsigned int i=0; i<10; i++){
             glm::mat4 model(1.0f);
             model=glm::translate(model, cube_positions[i]);
@@ -210,14 +207,11 @@ int main(int argc, char const* argv[])
             our_shader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }        
-        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // swap buffers and inquire io event
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-    glDeleteVertexArrays(1, &vao);
 
     glfwTerminate();
     return 0;

@@ -10,8 +10,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
-#include "../Camera.hpp"
-#include "../Shader.hpp"
+#include "Camera.hpp"
+#include "Shader.hpp"
+#include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
+#include "VertexLayout.hpp"
 
 int SCR_WIDTH=1920;
 int SCR_HEIGHT=1080;
@@ -133,41 +136,28 @@ int main(int argc, char const* argv[])
     };
 
     // cube VAO
-    unsigned int cube_vao, cube_vbo;
-    glGenVertexArrays(1, &cube_vao);
-    glGenBuffers(1, &cube_vbo);
-    glBindVertexArray(cube_vao);
-    glBindBuffer(GL_ARRAY_BUFFER, cube_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), &cube_vertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    VertexArray cube_vao;
+    VertexBuffer cube_vbo(cube_vertices, sizeof(cube_vertices));
+    VertexLayout cube_layout;
+    cube_layout.push<float>(3);
+    cube_layout.push<float>(2);
+    cube_vao.addBuffer(cube_vbo, cube_layout);
 
     // plane VAO
-    unsigned int plane_vao, plane_vbo;
-    glGenVertexArrays(1, &plane_vao);
-    glGenBuffers(1, &plane_vbo);
-    glBindVertexArray(plane_vao);
-    glBindBuffer(GL_ARRAY_BUFFER, plane_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), &plane_vertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    VertexArray plane_vao;
+    VertexBuffer plane_vbo(plane_vertices, sizeof(plane_vertices));
+    VertexLayout plane_layout;
+    plane_layout.push<float>(3);
+    plane_layout.push<float>(2);
+    plane_vao.addBuffer(plane_vbo, plane_layout);
 
     // transparent VAO
-    unsigned int transparent_vao, transparent_vbo;
-    glGenVertexArrays(1, &transparent_vao);
-    glGenBuffers(1, &transparent_vbo);
-    glBindVertexArray(transparent_vao);
-    glBindBuffer(GL_ARRAY_BUFFER, transparent_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(transparent_vertices), transparent_vertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-    glBindVertexArray(0);
+    VertexArray transparent_vao;
+    VertexBuffer transparent_vbo(transparent_vertices, sizeof(transparent_vertices));
+    VertexLayout transparent_layout;
+    transparent_layout.push<float>(3);
+    transparent_layout.push<float>(2);
+    transparent_vao.addBuffer(transparent_vbo, transparent_layout);
 
     unsigned int cube_texture=loadTexture(PROJECT_PATH"/assets/textures/marble.jpg");
     unsigned int floor_texture=loadTexture(PROJECT_PATH"/assets/textures/metal.png");
@@ -211,7 +201,7 @@ int main(int argc, char const* argv[])
         our_shader.setMat4("projection", projection);
 
         // cubes
-        glBindVertexArray(cube_vao);
+        cube_vao.bind();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, cube_texture);
 
@@ -225,14 +215,14 @@ int main(int argc, char const* argv[])
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // floor
-        glBindVertexArray(plane_vao);
+        plane_vao.bind();
         glBindTexture(GL_TEXTURE_2D, floor_texture);
         model=glm::mat4(1.0f);
         our_shader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // vegetation
-        glBindVertexArray(transparent_vao);
+        transparent_vao.bind();
         glBindTexture(GL_TEXTURE_2D, transparent_texture);
 
         for(const auto& [key, value]: sorted){
@@ -245,11 +235,6 @@ int main(int argc, char const* argv[])
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-
-    glDeleteVertexArrays(1, &cube_vao);
-    glDeleteVertexArrays(1, &plane_vao);
-    glDeleteBuffers(1, &cube_vbo);
-    glDeleteBuffers(1, &plane_vbo);
 
     glfwTerminate();
     return 0;

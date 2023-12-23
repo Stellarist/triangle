@@ -9,11 +9,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
     ${CMAKE_SOURCE_DIR}/bin)
 
 add_compile_options(-Wall)
-#add_compile_options(-Wall -Werror)
-#add_compile_options(-fdiagnostics-color=always -fansi-escape-codes)
+add_compile_options(-Wall -Werror)
+add_compile_options(-fdiagnostics-color=always -fansi-escape-codes)
 add_compile_definitions(PROJECT_PATH="${CMAKE_SOURCE_DIR}")
 
 include_directories(dependencies)
+include_directories(src)
 
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
