@@ -1,11 +1,14 @@
 #pragma once
 
 #include <array>
-#include <string>
 #include <vector>
 #include <glm/glm.hpp>
 
 #include "Shader.hpp"
+#include "Texture.hpp"
+#include "VertexArray.hpp"
+#include "VertexBuffer.hpp"
+#include "IndexBuffer.hpp"
 
 const int MAX_BONES_INFLUENCE = 4;
 
@@ -21,26 +24,20 @@ struct Vertex{
     std::array<float, MAX_BONES_INFLUENCE> bone_weights;
 };
 
-struct Texture{
-    unsigned int id;
-    std::string type;
-    std::string path;
-};
-
 class Mesh{
 private:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
 
-    unsigned int vao;
-    unsigned int vbo;
-    unsigned int ibo;
-
+    VertexArray vao;
+    VertexBuffer vbo;
+    IndexBuffer ibo;
 
 public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
 
     void draw(Shader& shader);
-    void setupMesh();
+
+friend class Model;
 };

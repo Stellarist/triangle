@@ -7,10 +7,6 @@ private:
     std::string  path;
     std::string  type;
 
-    int width;
-    int height;
-    int nrComponents;
-
 public:
     Texture(const std::string& path, const std::string& type="");
     ~Texture();
@@ -19,12 +15,10 @@ public:
     void unbind() const;    
 
     int getId() const {return id;}
-    int getWidth() const {return width;}
-    int getHeight() const {return height;}
-    int getNrComponents() const {return nrComponents;}
+    unsigned int& getId() {return id;}
     std::string getPath() const {return path;}
     std::string getType() const {return type;}
+    std::string getName() const {return path.substr(path.find_last_of('/')+1);}
 
     static void flipVertically(bool flip=false);
-friend class Mesh;
 };

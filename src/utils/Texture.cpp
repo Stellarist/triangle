@@ -10,8 +10,9 @@ Texture::Texture(const std::string& path, const std::string& type)
 : path(path), type(type)
 {    
     glGenTextures(1, &id);
+    int width, height, nrComponents;
     
-    unsigned char *data=stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+    unsigned char* data=stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
     if(data){
         GLenum format=0;
         if(nrComponents == 1)
