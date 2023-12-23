@@ -9,7 +9,7 @@
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures)
 : vertices(vertices), indices(indices), textures(textures), 
   vao(),
-  vbo(vertices.data(), vertices.size()*sizeof(Vertex)), 
+  vbo(vertices.data(), vertices.size()*sizeof(Vertex)),
   ibo(indices.data(), indices.size())
 {
     VertexLayout layout;
