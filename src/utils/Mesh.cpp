@@ -45,7 +45,7 @@ void Mesh::draw(Shader& shader)
             number=std::to_string(height_n++);
 
         shader.setInt(name+number, i);
-        glBindTexture(GL_TEXTURE_2D, textures[i].getId());
+        textures[i].bind(i);
     }
 
     vao.bind();

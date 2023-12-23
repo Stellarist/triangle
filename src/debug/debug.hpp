@@ -29,6 +29,9 @@ inline bool glLogCall(const char* function, const char* file, int line)
 inline void glPrintError(std::string function)
 {
     GLenum error=glGetError();
-    // if(error!=GL_NO_ERROR)
     std::println("Error: {} in {}", error, function);
+}
+
+inline void GLAPIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam) {
+    std::println("OpenGL Debug: {}", message);
 }
