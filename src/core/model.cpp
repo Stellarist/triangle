@@ -8,9 +8,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
-#include "Camera.hpp"
-#include "Shader.hpp"
-#include "Model.hpp"
+#include "utils/Camera.hpp"
+#include "utils/Shader.hpp"
+#include "utils/Model.hpp"
 
 int SCR_WIDTH=1920;
 int SCR_HEIGHT=1080;

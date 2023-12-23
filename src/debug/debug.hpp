@@ -12,12 +12,12 @@
     x;\
     ASSERT(glLogCall(#x, __FILE__, __LINE__));
 
-void glClearError()
+inline void glClearError()
 {
     while(glGetError()!=GL_NO_ERROR);
 }
 
-bool glLogCall(const char* function, const char* file, int line)
+inline bool glLogCall(const char* function, const char* file, int line)
 {
     while(GLenum error=glGetError()){
         std::println("Error:{} {} {}: {}", error, function, file, line);
@@ -26,7 +26,7 @@ bool glLogCall(const char* function, const char* file, int line)
     return true;
 }
 
-void glPrintError(std::string function)
+inline void glPrintError(std::string function)
 {
     GLenum error=glGetError();
     // if(error!=GL_NO_ERROR)

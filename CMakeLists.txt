@@ -13,19 +13,19 @@ add_compile_options(-Wall -Werror)
 add_compile_options(-fdiagnostics-color=always -fansi-escape-codes)
 add_compile_definitions(PROJECT_PATH="${CMAKE_SOURCE_DIR}")
 
-include_directories(dependencies)
 include_directories(src)
+include_directories(dependencies)
 
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 find_package(assimp REQUIRED)
 
-file(GLOB SRC_LIST src/*.cpp)
-add_library(triangle STATIC ${SRC_LIST})
+file(GLOB UTIL_LIST src/utils/*.cpp)
+add_library(utils STATIC ${UTIL_LIST})
 
 set(LIB_LIST
 PRIVATE
-    triangle
+    utils
 PUBLIC
     ${CMAKE_SOURCE_DIR}/dependencies/glad/glad.lib
     glfw

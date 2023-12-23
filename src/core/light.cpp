@@ -8,11 +8,11 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
-#include "Camera.hpp"
-#include "Shader.hpp"
-#include "VertexArray.hpp"
-#include "VertexBuffer.hpp"
-#include "VertexLayout.hpp"
+#include "utils/Camera.hpp"
+#include "utils/Shader.hpp"
+#include "utils/VertexArray.hpp"
+#include "utils/VertexBuffer.hpp"
+#include "utils/VertexLayout.hpp"
 
 int SCR_WIDTH=1920;
 int SCR_HEIGHT=1080;
