@@ -5,12 +5,13 @@
 
 class VertexArray {
 private:
-    unsigned int vao;
+    unsigned int id;
 
 public:
     VertexArray();
     ~VertexArray();
+    
     void bind() const;
     void unbind() const;
-    void addBuffer(const VertexBuffer& vb, const VertexLayout& layout);
+    void addBuffer(const VertexBuffer& vbo, const VertexLayout& layout);
 };

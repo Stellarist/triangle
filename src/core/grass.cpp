@@ -8,10 +8,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <stb_image.h>
 
 #include "utils/Camera.hpp"
 #include "utils/Shader.hpp"
+#include "utils/Texture.hpp"
 #include "utils/VertexArray.hpp"
 #include "utils/VertexBuffer.hpp"
 #include "utils/VertexLayout.hpp"
@@ -23,7 +23,6 @@ void processInput(GLFWwindow *window);
 void framebufferSizeCallback(GLFWwindow *window, int width, int height);
 void mouseCallback(GLFWwindow* window, double x_pos_in, double y_pos_in);
 void scrollCallback(GLFWwindow* window, double x_ofs, double y_ofs);
-unsigned int loadTexture(const char* path);
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float last_x=SCR_WIDTH/2.0f;
@@ -159,9 +158,9 @@ int main(int argc, char const* argv[])
     transparent_layout.push<float>(2);
     transparent_vao.addBuffer(transparent_vbo, transparent_layout);
 
-    unsigned int cube_texture=loadTexture(PROJECT_PATH"/assets/textures/marble.jpg");
-    unsigned int floor_texture=loadTexture(PROJECT_PATH"/assets/textures/metal.png");
-    unsigned int transparent_texture=loadTexture(PROJECT_PATH"/assets/textures/window.png");
+    Texture cube_texture(PROJECT_PATH"/assets/textures/marble.jpg");
+    Texture floor_texture(PROJECT_PATH"/assets/textures/metal.png");
+    Texture transparent_texture(PROJECT_PATH"/assets/textures/window.png");
 
     std::vector<glm::vec3> windows ={
         glm::vec3(-1.5f, 0.0f, -0.48f),
@@ -202,8 +201,7 @@ int main(int argc, char const* argv[])
 
         // cubes
         cube_vao.bind();
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, cube_texture);
+        cube_texture.bind(0);
 
         model=glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
         our_shader.setMat4("model", model);
@@ -216,14 +214,14 @@ int main(int argc, char const* argv[])
 
         // floor
         plane_vao.bind();
-        glBindTexture(GL_TEXTURE_2D, floor_texture);
+        floor_texture.bind(0);
         model=glm::mat4(1.0f);
         our_shader.setMat4("model", model);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // vegetation
         transparent_vao.bind();
-        glBindTexture(GL_TEXTURE_2D, transparent_texture);
+        transparent_texture.bind(0);
 
         for(const auto& [key, value]: sorted){
             model=glm::mat4(1.0f);
@@ -282,41 +280,4 @@ void mouseCallback(GLFWwindow* window, double x_pos_in, double y_pos_in)
 void scrollCallback(GLFWwindow* window, double x_ofs, double y_ofs)
 {
     camera.processMouseScroll((float)y_ofs);
-}
-
-unsigned int loadTexture(const char* path)
-{
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-    
-    int width, height, nrComponents;
-    unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
-    if (data)
-    {
-        GLenum format=0;
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
-    }
-    else
-    {
-        std::println("Texture failed to load at path:{}", path);
-        stbi_image_free(data);
-    }
-
-    return textureID;
 }

@@ -1,15 +1,13 @@
-#define STB_IMAGE_IMPLEMENTATION
-
 #include <print>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <stb_image.h>
 
 #include "utils/Camera.hpp"
 #include "utils/Shader.hpp"
+#include "utils/Texture.hpp"
 #include "utils/VertexArray.hpp"
 #include "utils/VertexBuffer.hpp"
 #include "utils/VertexLayout.hpp"
@@ -131,41 +129,9 @@ int main(int argc, char const* argv[])
     vao.addBuffer(vbo, vlo);
 
     // creating textures
-    unsigned int texture1;
-    glGenTextures(1, &texture1);
-    glBindTexture(GL_TEXTURE_2D, texture1);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_REPEAT);
-
-    int width, height, nr_channels;
-    stbi_set_flip_vertically_on_load(true);
-    unsigned char* data=stbi_load(PROJECT_PATH"/assets/textures/container.jpg", &width, &height, &nr_channels, 0);
-    if(data){
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }else{
-        std::println("Failed to load texture1.");
-    }
-    stbi_image_free(data);
-
-    unsigned int texture2;
-    glGenTextures(1, &texture2);
-    glBindTexture(GL_TEXTURE_2D, texture2);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_REPEAT);
-
-    data=stbi_load(PROJECT_PATH"/assets/textures/awesomeface.png", &width, &height, &nr_channels, 0);
-    if(data){
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }else{
-        std::println("Failed to load texture2.");
-    }
-    stbi_image_free(data);
+    Texture::flipVertically(true);
+    Texture texture1(PROJECT_PATH"/assets/textures/container.jpg");
+    Texture texture2(PROJECT_PATH"/assets/textures/awesomeface.png");
 
     our_shader.use();
     our_shader.setInt("texture1", 0);
@@ -184,10 +150,8 @@ int main(int argc, char const* argv[])
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // bind textures on corresponding texture units
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, texture2);
+        texture1.bind(0);
+        texture2.bind(1);
 
         // rendering
         our_shader.use();

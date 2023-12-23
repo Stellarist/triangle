@@ -15,12 +15,12 @@ private:
     unsigned int stride;
 
 public:
-    VertexLayout()
-        : stride(0) {}
+    VertexLayout(): stride(0) {}
     ~VertexLayout()=default;
+
     const std::vector<VertexElement>& getElements() const;
     unsigned int getStride() const;
-    template<typename T> void push(unsigned int count);
+    template<typename T> void push(unsigned int count, unsigned int offset=-1);
 };
 
 inline const std::vector<VertexElement>& VertexLayout::getElements() const
