@@ -1,20 +1,27 @@
 #include "VertexBuffer.hpp"
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size)
+: id(std::make_shared<unsigned int>())
 {
-  glGenBuffers(1, &id);
-  glBindBuffer(GL_ARRAY_BUFFER, id);
+  glGenBuffers(1, id.get());
+  glBindBuffer(GL_ARRAY_BUFFER, *id);
   glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW);
+}
+
+VertexBuffer::VertexBuffer(const VertexBuffer& other)
+  : id(other.id)
+{
 }
 
 VertexBuffer::~VertexBuffer()
 {
-  glDeleteBuffers(1, &id);
+  if(id.unique())
+    glDeleteBuffers(1, id.get());
 }
 
 void VertexBuffer::bind() const
 {
-  glBindBuffer(GL_ARRAY_BUFFER, id);
+  glBindBuffer(GL_ARRAY_BUFFER, *id);
 }
 
 void VertexBuffer::unbind() const

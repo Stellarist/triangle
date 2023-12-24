@@ -1,15 +1,18 @@
 #pragma once
 
 #include <string>
+#include <memory>
 #include <glm/glm.hpp>
 
 class Shader {
 private:
-    unsigned int program_id;
+    std::shared_ptr<unsigned int> id;
     void checkCompileErrors(unsigned int shader, std::string type);
 public:
     Shader(const char* vertex_path, const char* fragment_path);
+    Shader(const Shader& other);
     ~Shader();
+
     unsigned int getId();
     void use();
     void setBool(const std::string& name, bool value) const;
@@ -28,5 +31,5 @@ public:
 
 inline unsigned int Shader::getId()
 {
-    return program_id;
+    return *id;
 }

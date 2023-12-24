@@ -3,19 +3,26 @@
 #include <glad/glad.h>
 
 VertexArray::VertexArray() 
+: id(std::make_shared<unsigned int>())
 {
-    glGenVertexArrays(1, &id);
-    glBindVertexArray(id);
+    glGenVertexArrays(1, id.get());
+    glBindVertexArray(*id);
+}
+
+VertexArray::VertexArray(const VertexArray& other)
+: id(other.id)
+{
 }
 
 VertexArray::~VertexArray()
 {
-    glDeleteVertexArrays(1, &id);
+    if(id.unique())
+        glDeleteVertexArrays(1, id.get());
 }
 
 void VertexArray::bind() const
 {
-    glBindVertexArray(id);
+    glBindVertexArray(*id);
 }
 
 void VertexArray::unbind() const

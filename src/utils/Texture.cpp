@@ -7,9 +7,9 @@
 #include "stb_image.h"
 
 Texture::Texture(const std::string& path, const std::string& type)
-: path(path), type(type)
+: id(std::make_shared<unsigned int>()), path(path), type(type)
 {    
-    glGenTextures(1, &id);
+    glGenTextures(1, id.get());
     int width, height, nrComponents;
     
     unsigned char* data=stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
@@ -22,7 +22,7 @@ Texture::Texture(const std::string& path, const std::string& type)
         else if(nrComponents == 4)
             format = GL_RGBA;
 
-        glBindTexture(GL_TEXTURE_2D, id);
+        glBindTexture(GL_TEXTURE_2D, *id);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -38,15 +38,21 @@ Texture::Texture(const std::string& path, const std::string& type)
     }
 }
 
+Texture::Texture(const Texture& other)
+: id(other.id), path(other.path), type(other.type)
+{
+}
+
 Texture::~Texture()
 {
-    glDeleteTextures(1, &id);
+    if(id.unique())
+        glDeleteTextures(1, id.get());
 }
 
 void Texture::bind(unsigned int slot) const
 {
     glActiveTexture(GL_TEXTURE0+slot);
-    glBindTexture(GL_TEXTURE_2D, id);
+    glBindTexture(GL_TEXTURE_2D, *id);
 }
 
 void Texture::unbind() const

@@ -1,14 +1,17 @@
 #pragma once
 
+#include <memory>
+
 #include "VertexBuffer.hpp"
 #include "VertexLayout.hpp"
 
 class VertexArray {
 private:
-    unsigned int id;
+    std::shared_ptr<unsigned int> id;
 
 public:
     VertexArray();
+    VertexArray(const VertexArray& other);
     ~VertexArray();
     
     void bind() const;
