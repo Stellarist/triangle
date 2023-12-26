@@ -54,9 +54,12 @@ int main(int argc, char const* argv[])
         return -1;
     }
 
+    // import model
     Texture::flipVertically();
     Shader our_shader(PROJECT_PATH"/shaders/model.vs", PROJECT_PATH"/shaders/model.fs");
-    Model our_model(PROJECT_PATH"/assets/models/Nanosuit/Nanosuit.obj");
+
+    // TODO: change model path
+    // Model our_model(PROJECT_PATH"/assets/models/Nanosuit/Nanosuit.obj");
 
     while(!glfwWindowShouldClose(window)){
         float current_flame_time=(float)glfwGetTime();
@@ -90,18 +93,6 @@ int main(int argc, char const* argv[])
         our_shader.setBool("border", border);
 
         our_model.draw(our_shader);
-
-        // // border outline
-        // glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-        // glStencilMask(0x00);
-        // glDisable(GL_DEPTH_TEST);
-
-        // our_shader.setMat4("model", model);
-
-        // border=true;
-        // our_shader.setBool("border", border);
-
-        // our_model.draw(our_shader);
 
         // disable stencil test
         glStencilMask(0xFF);
